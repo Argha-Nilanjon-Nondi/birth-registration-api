@@ -1,8 +1,10 @@
 const router = require("express").Router();
 
+const db=require("../Db/index");
+
+
 router.post("/login", (request, response) => {
      console.log(request.body);
-     console.log("x-api-key" in request.headers);
   response.send("login");
 });
 

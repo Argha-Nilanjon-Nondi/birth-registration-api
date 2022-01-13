@@ -6,12 +6,13 @@ function rand_number() {
 }
 
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 uri = "mongodb://localhost:27017/birthDB";
 mongoose.connect(uri);
 let reg_id_length = 17;
 let nation_id_length = 10;
 const birthCollectionSchema = mongoose.Schema({
-  person_name: { type: String,uppercase:true, minLength: 5 },
+  person_name: { type: String, uppercase: true, minLength: 5 },
   person_birth_reg_id: {
     type: String,
     minLength: reg_id_length,
@@ -26,8 +27,8 @@ const birthCollectionSchema = mongoose.Schema({
     default: new Date().toISOString().slice(0, 10),
   },
   person_gender: { type: String },
-  father_name: { type: String,uppercase:true, minLength: 5 },
-  mother_name: { type: String,uppercase:true, minLength: 5 },
+  father_name: { type: String, uppercase: true, minLength: 5 },
+  mother_name: { type: String, uppercase: true, minLength: 5 },
   father_birth_reg_id: {
     type: String,
     minLength: reg_id_length,
@@ -86,22 +87,25 @@ const addPersonData = (data, callback) => {
   );
 };
 
-const updatePersonData=(birth_reg_id,data,callback)=>{
-  birthRegCollection.findOneAndUpdate({person_birth_reg_id:birth_reg_id},data,function (err,row){
-if(err){
-  callback(false)
-  return 0;
-}
-else{
-  callback(true);
-  return 0;
-}
-  })
-}
+const updatePersonData = (birth_reg_id, data, callback) => {
+  birthRegCollection.findOneAndUpdate(
+    { person_birth_reg_id: birth_reg_id },
+    data,
+    function (err, row) {
+      if (err) {
+        callback(false);
+        return 0;
+      } else {
+        callback(true);
+        return 0;
+      }
+    }
+  );
+};
 
 const getUserProfile = (birth_reg_id, callback) => {
   birthRegCollection.findOne(
-    { person_birth_reg_id: birth_reg_id },
+    { person_birth_reg_id: birth_reg_id },{_id:0,__v:0},
     function (err, row) {
       if (err) {
         console.log(err);
@@ -132,9 +136,9 @@ let data = {
 //   console.log(data);
 // });
 
-// getUserProfile((birth_reg_id = "17848646035472649"), (data) => {
-//   console.log(data);
-// });
+getUserProfile((birth_reg_id = "17848646035472649"), (data) => {
+  console.log(data);
+});
 
 // updatePersonData("17848646035472649",{person_name:"Argha nondi"}, (data) => {
 //   console.log(data);
@@ -142,12 +146,50 @@ let data = {
 
 const userCollectionSchema = mongoose.Schema({
   userid: { type: String, unique: true },
-  username: { type: String,unique:true },
+  username: { type: String, unique: true },
+  usertype:{type:String,lowercase:true},
   password: { type: String },
 });
 
 const userCollection = mongoose.model("users", userCollectionSchema);
 
-const addUser = (data,callback)=>{
-  
+const addUser = (data, callback) => {
+  const rn = rand_number() + rand_number() + rand_number();
+  const hash = crypto.createHash("sha256").update(data["password"]).digest("hex");
+  data["password"]=hash;
+  data["userid"] = rn;
+  const row = new userCollection(data);
+  row.save((err, row) => {
+    if (err) {
+      callback(false);
+      return 0;
+    }
+    callback(true);
+    return 0;
+  });
 };
+
+const checkPassword=(username,password,callback)=>{
+  const hash = crypto
+    .createHash("sha256")
+    .update(password)
+    .digest("hex");
+userCollection.findOne({username:username,password:hash},{__v:0,_id:0,username:0,password:0},function (err,row){
+  if(row===null){
+    callback(false)
+    return 0;
+  }
+  callback(row)
+  return 0;
+})
+}
+
+// checkPassword("argha_nilanjon_nondi","56665'';'[][]",(data)=>{
+//   console.log(data)
+// })
+
+// addUser({username:"argha_nilanjon_nondi",usertype:"admin",password:"56665'';'[][]"},(data)=>{
+//   console.log(data)
+// })
+
+module.exports={addUser,addPersonData}
