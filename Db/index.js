@@ -136,9 +136,9 @@ let data = {
 //   console.log(data);
 // });
 
-getUserProfile((birth_reg_id = "17848646035472649"), (data) => {
-  console.log(data);
-});
+// getUserProfile((birth_reg_id = "17848646035472649"), (data) => {
+//   console.log(data);
+// });
 
 // updatePersonData("17848646035472649",{person_name:"Argha nondi"}, (data) => {
 //   console.log(data);
@@ -174,7 +174,7 @@ const checkPassword=(username,password,callback)=>{
     .createHash("sha256")
     .update(password)
     .digest("hex");
-userCollection.findOne({username:username,password:hash},{__v:0,_id:0,username:0,password:0},function (err,row){
+userCollection.findOne({username:username,password:hash},{__v:0,_id:0,username:0,usertype:0,password:0},function (err,row){
   if(row===null){
     callback(false)
     return 0;
@@ -192,4 +192,4 @@ userCollection.findOne({username:username,password:hash},{__v:0,_id:0,username:0
 //   console.log(data)
 // })
 
-module.exports={addUser,addPersonData}
+module.exports={addUser,addPersonData,checkPassword}

@@ -1,10 +1,9 @@
 const router = require("express").Router();
-
+const middleware=require("../Middlewares/index")
 const db=require("../Db/index");
 
 
-router.post("/login", (request, response) => {
-     console.log(request.body);
+router.post("/login",[middleware.loginRequiredField,middleware.validateUsername,middleware.validatePassword], (request, response) => {
   response.send("login");
 });
 
