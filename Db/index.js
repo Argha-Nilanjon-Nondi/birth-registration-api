@@ -1,3 +1,6 @@
+const mongoose = require("mongoose");
+const crypto = require("crypto");
+
 function rand_number() {
   let min = 10000000;
   let max = 99999999;
@@ -5,8 +8,6 @@ function rand_number() {
   return rand.toString();
 }
 
-const mongoose = require("mongoose");
-const crypto = require("crypto");
 uri = "mongodb://localhost:27017/birthDB";
 mongoose.connect(uri);
 let reg_id_length = 17;
@@ -105,7 +106,8 @@ const updatePersonData = (birth_reg_id, data, callback) => {
 
 const getUserProfile = (birth_reg_id, callback) => {
   birthRegCollection.findOne(
-    { person_birth_reg_id: birth_reg_id },{_id:0,__v:0},
+    { person_birth_reg_id: birth_reg_id },
+    { _id: 0, __v: 0 },
     function (err, row) {
       if (err) {
         console.log(err);
@@ -147,7 +149,7 @@ let data = {
 const userCollectionSchema = mongoose.Schema({
   userid: { type: String, unique: true },
   username: { type: String, unique: true },
-  usertype:{type:String,lowercase:true},
+  usertype: { type: String, lowercase: true },
   password: { type: String },
 });
 
@@ -155,13 +157,16 @@ const userCollection = mongoose.model("users", userCollectionSchema);
 
 const addUser = (data, callback) => {
   const rn = rand_number() + rand_number() + rand_number();
-  const hash = crypto.createHash("sha256").update(data["password"]).digest("hex");
-  data["password"]=hash;
+  const hash = crypto
+    .createHash("sha256")
+    .update(data["password"])
+    .digest("hex");
+  data["password"] = hash;
   data["userid"] = rn;
   const row = new userCollection(data);
   row.save((err, row) => {
     if (err) {
-      callback(false);
+      callback("error");
       return 0;
     }
     callback(true);
@@ -169,27 +174,32 @@ const addUser = (data, callback) => {
   });
 };
 
-const checkPassword=(username,password,callback)=>{
-  const hash = crypto
-    .createHash("sha256")
-    .update(password)
-    .digest("hex");
-userCollection.findOne({username:username,password:hash},{__v:0,_id:0,username:0,usertype:0,password:0},function (err,row){
-  if(row===null){
-    callback(false)
-    return 0;
-  }
-  callback(row)
-  return 0;
-})
-}
+const checkPassword = (username, password, callback) => {
+  const hash = crypto.createHash("sha256").update(password).digest("hex");
+  userCollection.findOne(
+    { username: username, password: hash },
+    { __v: 0, _id: 0, username: 0, usertype: 0, password: 0 },
+    function (err, row) {
+      if(err){
+        callback("error");
+        return 0;
+      }
+      if (row === null) {
+        callback(false);
+        return 0;
+      }
+      callback(row);
+      return 0;
+    }
+  );
+};
 
 // checkPassword("argha_nilanjon_nondi","56665'';'[][]",(data)=>{
 //   console.log(data)
 // })
 
-// addUser({username:"argha_nilanjon_nondi",usertype:"admin",password:"56665'';'[][]"},(data)=>{
+// addUser({username:"argha_nilanjon",usertype:"admin",password:"avunix9143"},(data)=>{
 //   console.log(data)
 // })
 
-module.exports={addUser,addPersonData,checkPassword}
+module.exports = { addUser, addPersonData, checkPassword };
