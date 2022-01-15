@@ -1,6 +1,6 @@
 function fieldFind(fieldList, object) {
   for (field of fieldList) {
-    if (object[field] === undefined) {
+    if ((object[field] === undefined) || (object[field]=="")) {
       return false;
     }
   }

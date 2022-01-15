@@ -1,4 +1,9 @@
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+
+const db = require("../Db/index");
 const lib = require("../Lib/index");
+const process = dotenv.config({ path: "./.env" });
 
 const loginRequiredField = (request, response, next) => {
   let fieldList = ["username", "password"];
@@ -27,8 +32,66 @@ const validatePassword = (request, response, next) => {
   }
 };
 
-module.exports={
-    loginRequiredField,
-    validateUsername,
-    validatePassword
-}
+const authoRequiredField = (request, response, next) => {
+  let fieldList = ["x-api-key"];
+  if (lib.fieldFind(fieldList, request.headers) === false) {
+    response.json({
+      code: 3005,
+      message: "required token is not in the headers",
+    });
+  } else {
+    next();
+  }
+};
+
+const validateToken = (request, response, next) => {
+  let access_token = request.headers["x-api-key"];
+  jwt.verify(access_token, process.parsed["SECRET_KEY"], (err, data) => {
+    if (err) {
+      response.json({
+        code: 3006,
+        message: "token is invalid",
+      });
+    } else {
+      next();
+    }
+  });
+};
+
+const validateAdminType = (request, response, next) => {
+  let access_token = request.headers["x-api-key"];
+  let decoded = jwt.decode(access_token);
+  let userid = decoded.userid;
+  
+  db.checkUserType(userid,(status)=>{
+
+    if (typeof status === "object" && status !== null) {
+      if(status.usertype==="admin"){
+        next()
+      }
+      else{
+        response.json({ code: "3007", message: "you are not admin" });
+      }
+    }
+
+    else if (status === false) {
+      response.json({ code: "3008", message:"user is deleted" });
+    }
+    
+    else if (status === "error") {
+      response.json({
+        code: "3004",
+        message: "some errors has been occured",
+      });
+    }
+  })
+};
+
+module.exports = {
+  loginRequiredField,
+  validateUsername,
+  validatePassword,
+  authoRequiredField,
+  validateToken,
+  validateAdminType,
+};

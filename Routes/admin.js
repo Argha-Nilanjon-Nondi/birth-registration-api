@@ -1,9 +1,10 @@
 const router = require("express").Router();
 
+const middleware=require("../Middlewares/index");
 
-router.use((request,response,next)=>{
-   console.log(request)
-})
+router.use(middleware.authoRequiredField)
+router.use(middleware.validateToken)
+router.use(middleware.validateAdminType)
 
 router.get("/profiles/:id", (request, response) => {
   

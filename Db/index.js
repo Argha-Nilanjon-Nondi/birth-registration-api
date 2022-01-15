@@ -180,7 +180,26 @@ const checkPassword = (username, password, callback) => {
     { username: username, password: hash },
     { __v: 0, _id: 0, username: 0, usertype: 0, password: 0 },
     function (err, row) {
-      if(err){
+      if (err) {
+        callback("error");
+        return 0;
+      }
+      if (row === null) {
+        callback(false);
+        return 0;
+      }
+      callback(row);
+      return 0;
+    }
+  );
+};
+
+const checkUserType = (userid, callback) => {
+  userCollection.findOne(
+    { userid: userid },
+    { __v: 0, _id: 0, username: 0, userid: 0, password: 0 },
+    function (err, row) {
+      if (err) {
         callback("error");
         return 0;
       }
@@ -202,4 +221,4 @@ const checkPassword = (username, password, callback) => {
 //   console.log(data)
 // })
 
-module.exports = { addUser, addPersonData, checkPassword };
+module.exports = { addUser, addPersonData, checkPassword, checkUserType };
