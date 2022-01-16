@@ -7,5 +7,16 @@
 3006 ==> "token is invalid"
 3007 ==> "you are not admin"
 3008 ==>"user is deleted"
+3009 ==>"person name is invalid"
+3010 ==>"father name is invalid" 
+3011 ==>"mother name is invalid"
+3012 ==>"father national id is invalid"
+3013 ==>"mother national id is invalid"
+3014 ==>"father birth registration id is invalid"
+3015 ==>"mother birth registration id is invalid"
+3016 ==>"person birth vaccine id is invalid"
+3017 ==>"person gender type is invalid" 
+3018 ==>"person birth no is invalid"  
+3019 ==>"person birth date is invalid"
 
 2000 ==> "login is successsful",

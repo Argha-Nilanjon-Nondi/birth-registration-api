@@ -10,14 +10,22 @@ function rand_number() {
 
 uri = "mongodb://localhost:27017/birthDB";
 mongoose.connect(uri);
+
 let reg_id_length = 17;
 let nation_id_length = 10;
+let vaccine_id_length=13;
+
 const birthCollectionSchema = mongoose.Schema({
   person_name: { type: String, uppercase: true, minLength: 5 },
   person_birth_reg_id: {
     type: String,
     minLength: reg_id_length,
     maxLength: reg_id_length,
+  },
+  person_birth_vaccine_id: {
+    type: String,
+    minLength: vaccine_id_length,
+    maxLength: vaccine_id_length,
   },
   person_birth_date: { type: Date },
   person_birth_no: { type: Number },
@@ -127,6 +135,7 @@ let data = {
   person_birth_no: 2,
   person_birth_place: "Jhenaidha , Khulna , Bangladesh ",
   person_gender: "male",
+  person_birth_vaccine_id:"0123456789012",
   father_name: "Father Name " + a,
   mother_name: "Mother Name " + a,
   father_birth_reg_id: "01234527890123452",
