@@ -13,7 +13,7 @@ mongoose.connect(uri);
 
 let reg_id_length = 17;
 let nation_id_length = 10;
-let vaccine_id_length=13;
+let vaccine_id_length = 13;
 
 const birthCollectionSchema = mongoose.Schema({
   person_name: { type: String, uppercase: true, minLength: 5 },
@@ -86,12 +86,48 @@ const addPersonData = (data, callback) => {
       row.save((err, row) => {
         if (err) {
           console.log(err);
-          callback(false);
+          callback("error");
           return 0;
         }
         callback(true);
         return 0;
       });
+    }
+  );
+};
+
+const isVaccineIdExist = (person_birth_vaccine_id, callback) => {
+  birthRegCollection.countDocuments(
+    { person_birth_vaccine_id: person_birth_vaccine_id },
+    function (err, count) {
+      if (err) {
+        callback("error");
+        return 0;
+      }
+      if (count === 0) {
+        callback(false);
+        return 0;
+      }
+      callback(true);
+      return 0;
+    }
+  );
+};
+
+const isBirthRegIdExist = (person_birth_reg_id, callback) => {
+  birthRegCollection.countDocuments(
+    { person_birth_reg_id: person_birth_reg_id },
+    function (err, count) {
+      if (err) {
+        callback("error");
+        return 0;
+      }
+      if (count === 0) {
+        callback(false);
+        return 0;
+      }
+      callback(true);
+      return 0;
     }
   );
 };
@@ -102,7 +138,7 @@ const updatePersonData = (birth_reg_id, data, callback) => {
     data,
     function (err, row) {
       if (err) {
-        callback(false);
+        callback("error");
         return 0;
       } else {
         callback(true);
@@ -135,7 +171,7 @@ let data = {
   person_birth_no: 2,
   person_birth_place: "Jhenaidha , Khulna , Bangladesh ",
   person_gender: "male",
-  person_birth_vaccine_id:"0123456789012",
+  person_birth_vaccine_id: "0123456789012",
   father_name: "Father Name " + a,
   mother_name: "Mother Name " + a,
   father_birth_reg_id: "01234527890123452",
@@ -203,20 +239,19 @@ const checkPassword = (username, password, callback) => {
   );
 };
 
-const checkUserType = (userid, callback) => {
-  userCollection.findOne(
-    { userid: userid },
-    { __v: 0, _id: 0, username: 0, userid: 0, password: 0 },
-    function (err, row) {
+const checkUserType = (userid, usertype, callback) => {
+  userCollection.countDocuments(
+    { userid: userid, usertype: usertype },
+    function (err, count) {
       if (err) {
         callback("error");
         return 0;
       }
-      if (row === null) {
+      if (count === 0) {
         callback(false);
         return 0;
       }
-      callback(row);
+      callback(true);
       return 0;
     }
   );
@@ -230,4 +265,16 @@ const checkUserType = (userid, callback) => {
 //   console.log(data)
 // })
 
-module.exports = { addUser, addPersonData, checkPassword, checkUserType };
+// isVaccineIdExist("01234567890120", (status) => {
+//   console.log(status);
+// });
+
+module.exports = {
+  addUser,
+  addPersonData,
+  updatePersonData,
+  checkPassword,
+  checkUserType,
+  isVaccineIdExist,
+  isBirthRegIdExist,
+};

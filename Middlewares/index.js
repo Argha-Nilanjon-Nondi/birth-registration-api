@@ -63,15 +63,11 @@ const validateAdminType = (request, response, next) => {
   let decoded = jwt.decode(access_token);
   let userid = decoded.userid;
 
-  db.checkUserType(userid, (status) => {
-    if (typeof status === "object" && status !== null) {
-      if (status.usertype === "admin") {
-        next();
-      } else {
-        response.json({ code: "3007", message: "you are not admin" });
-      }
+  db.checkUserType(userid,usertype="admin", (status) => {
+    if (status===true) {
+      next();
     } else if (status === false) {
-      response.json({ code: "3008", message: "user is deleted" });
+       response.json({ code: "3007", message: "you are not admin" });
     } else if (status === "error") {
       response.json({
         code: "3004",
@@ -202,6 +198,62 @@ const validateMotherBirthID = (request, response, next) => {
   }
 };
 
+const validateVaccinIdExist=(request,response,next)=>{
+   let person_birth_vaccine_id = request.body["person_birth_vaccine_id"];
+   db.isVaccineIdExist(person_birth_vaccine_id,(status)=>{
+     if (status === false) {
+       next();
+     } else if (status === true) {
+       response.json({ code: 3020, message: "vaccine id is already exist" });
+     } else if (status === "error") {
+       response.json({
+         code: "3004",
+         message: "some errors has been occured",
+       });
+     }
+   })
+}
+
+const validateBirthRegIdExist = (request, response, next) => {
+  let person_birth_reg_id = request.body["person_birth_reg_id"];
+  db.isBirthRegIdExist(person_birth_reg_id, (status) => {
+    if (status === true) {
+      next();
+    } else if (status === false) {
+      response.json({ code: 3022, message: "person birth registration id is not found" });
+    } else if (status === "error") {
+      response.json({
+        code: "3004",
+        message: "some errors has been occured",
+      });
+    }
+  });
+};
+
+const personUpdateRequiredField = (request, response, next) => {
+  let fieldList = [
+    "person_birth_reg_id",
+  ];
+  if (lib.fieldFind(fieldList, request.body) === false) {
+    response.json({ code: 3000, message: "required field is not found" });
+  } else {
+    next();
+  }
+};
+
+const validatePersonBirthID = (request, response, next) => {
+  let person_birth_id = request.body["person_birth_reg_id"];
+  if (lib.isBRIdValid(person_birth_id) === false) {
+    response.json({
+      code: 3021,
+      message: "person birth registration id is invalid",
+    });
+  } else {
+    next();
+  }
+};
+
+
 module.exports = {
   loginRequiredField,
   validateUsername,
@@ -220,5 +272,9 @@ module.exports = {
   validatePersonBirthDate,
   validatePersonBirthVaccineID,
   validatePersonGenderType,
-  validatePersonBirthNo
+  validatePersonBirthNo,
+  validateVaccinIdExist,
+  personUpdateRequiredField,
+  validatePersonBirthID,
+  validateBirthRegIdExist,
 };
