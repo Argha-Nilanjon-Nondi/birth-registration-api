@@ -1,8 +1,7 @@
 const router = require("express").Router();
-const { pbkdf2Sync } = require("crypto");
-const db = require("../Db/index");
-const lib = require("../Lib/index");
-const middleware = require("../Middlewares/index");
+const db = require("../../Db/index");
+const lib = require("../../Lib/index");
+const middleware = require("../../Middlewares/index");
 
 router.use(middleware.authoRequiredField);
 router.use(middleware.validateToken);
@@ -61,7 +60,7 @@ router.post(
 router.put(
   "/person/",
   [middleware.personUpdateRequiredField, middleware.validateBirthRegIdExist],
-  (request, response) => {
+  async (request, response) => {
     let data = {};
 
     if (lib.fieldFind(["person_name"], request.body) === true) {
@@ -117,7 +116,9 @@ router.put(
         });
         return 0;
       } else {
-        db.isVaccineIdExist(person_birth_vaccine_id, (status) => {
+        try {
+          let status = await db.isVaccineIdExistSYC(person_birth_vaccine_id);
+          console.log(status);
           if (status === false) {
             data.person_birth_vaccine_id = person_birth_vaccine_id;
           } else if (status === true) {
@@ -126,14 +127,14 @@ router.put(
               message: "vaccine id is already exist",
             });
             return 0;
-          } else if (status === "error") {
-            response.json({
-              code: "3004",
-              message: "some errors has been occured",
-            });
-            return 0;
           }
-        });
+        } catch (error) {
+          response.json({
+            code: "3004",
+            message: "some errors has been occured",
+          });
+          return 0;
+        }
       }
     }
 
@@ -205,6 +206,8 @@ router.put(
 
     let person_birth_reg_id = request.body["person_birth_reg_id"];
 
+    console.log(data);
+
     db.updatePersonData(person_birth_reg_id, data, (status) => {
       if (status === true) {
         response.json({
@@ -215,6 +218,29 @@ router.put(
         response.json({
           code: 3004,
           message: "some errors has been occured",
+        });
+      }
+    });
+  }
+);
+
+// find person data by vaccine id
+router.get(
+  "/person/:person_birth_vaccine_id",
+  [middleware.validatePersonBirthVaccineID, middleware.validateVaccinIdExist],
+  (request, response) => {
+    let vaccine_id = request.params.person_birth_vaccine_id;
+    db.getPersonProfileByVaccID(vaccine_id, (data) => {
+      if (data === "error") {
+        response.json({
+          code: 3004,
+          message: "some errors has been occured",
+        });
+      } else {
+        response.json({
+          code: 2003,
+          message: "person data is found for the vaccine id",
+          data: data,
         });
       }
     });

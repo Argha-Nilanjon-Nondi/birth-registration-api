@@ -18,13 +18,13 @@
 3017 ==>"person gender type is invalid" 
 3018 ==>"person birth no is invalid"  
 3019 ==>"person birth date is invalid"
-"3020", message: "vaccine id is already exist" 
-3021,
-      message: "person birth registration id is invalid",
-3022, message: "person birth registration id is not found
+3020 ==>"vaccine id is already exist" 
+3021 ==>"person birth registration id is invalid"
+3022 ==>"person birth registration id is not found
+3023 ==>"vaccine id is not found
 
-2000 ==> "login is successsful",
-"2001",
-          message: "person data is added"
-2002,
-         message: "person data is updated"
+2000 ==>"login is successsful",
+2001 ==>"person data is added"
+2002 ==>"person data is updated"
+2003 ==>"person data is found for the vaccine id"
+2004 ==>"person data is found for the birth registration id"

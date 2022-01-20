@@ -114,6 +114,16 @@ const isVaccineIdExist = (person_birth_vaccine_id, callback) => {
   );
 };
 
+
+const isVaccineIdExistSYC =async (person_birth_vaccine_id) => {
+  let count = await birthRegCollection.countDocuments({ person_birth_vaccine_id: person_birth_vaccine_id });
+  if(count===0){
+    return false;
+  }
+  return true;
+  }
+
+  isVaccineIdExistSYC("890898989789")
 const isBirthRegIdExist = (person_birth_reg_id, callback) => {
   birthRegCollection.countDocuments(
     { person_birth_reg_id: person_birth_reg_id },
@@ -148,14 +158,28 @@ const updatePersonData = (birth_reg_id, data, callback) => {
   );
 };
 
-const getUserProfile = (birth_reg_id, callback) => {
+const getPersonProfileByRegID = (birth_reg_id, callback) => {
   birthRegCollection.findOne(
     { person_birth_reg_id: birth_reg_id },
     { _id: 0, __v: 0 },
     function (err, row) {
       if (err) {
-        console.log(err);
-        callback(false);
+        callback("error");
+        return 0;
+      }
+      callback(row);
+      return 0;
+    }
+  );
+};
+
+const getPersonProfileByVaccID = (vaccine_id, callback) => {
+  birthRegCollection.findOne(
+    { person_birth_vaccine_id: vaccine_id },
+    { _id: 0, __v: 0 },
+    function (err, row) {
+      if (err) {
+        callback("error");
         return 0;
       }
       callback(row);
@@ -276,5 +300,8 @@ module.exports = {
   checkPassword,
   checkUserType,
   isVaccineIdExist,
+  isVaccineIdExistSYC,
   isBirthRegIdExist,
+  getPersonProfileByRegID,
+  getPersonProfileByVaccID,
 };

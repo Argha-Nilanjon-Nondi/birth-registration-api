@@ -63,14 +63,14 @@ const validateAdminType = (request, response, next) => {
   let decoded = jwt.decode(access_token);
   let userid = decoded.userid;
 
-  db.checkUserType(userid,usertype="admin", (status) => {
-    if (status===true) {
+  db.checkUserType(userid, (usertype = "admin"), (status) => {
+    if (status === true) {
       next();
     } else if (status === false) {
-       response.json({ code: "3007", message: "you are not admin" });
+      response.json({ code: 3007, message: "you are not admin" });
     } else if (status === "error") {
       response.json({
-        code: "3004",
+        code: 3004,
         message: "some errors has been occured",
       });
     }
@@ -99,19 +99,29 @@ const personAddRequiredField = (request, response, next) => {
   }
 };
 
-const validatePersonName=(request,response,next)=>{
-  let  person_name= request.body["person_name"];
+const validatePersonName = (request, response, next) => {
+  let person_name = request.body["person_name"];
   if (lib.isNameValid(person_name) === false) {
     response.json({ code: 3009, message: "person name is invalid" });
   } else {
     next();
   }
-}
+};
 
 const validatePersonBirthVaccineID = (request, response, next) => {
-  let person_birth_vaccine_id = request.body["person_birth_vaccine_id"];
+  let person_birth_vaccine_id;
+  let method = request.method;
+  if (method === "GET" || method === "DELETE") {
+    person_birth_vaccine_id = request.params["person_birth_vaccine_id"];
+  } else {
+    person_birth_vaccine_id = request.body["person_birth_vaccine_id"];
+  }
+
   if (lib.isBVIdValid(person_birth_vaccine_id) === false) {
-    response.json({ code: 3016, message: "person birth vaccine id is invalid" });
+    response.json({
+      code: 3016,
+      message: "person birth vaccine id is invalid",
+    });
   } else {
     next();
   }
@@ -163,7 +173,7 @@ const validateMotherName = (request, response, next) => {
 };
 
 const validateFatherNID = (request, response, next) => {
-  let father_nid= request.body["father_national_id"];
+  let father_nid = request.body["father_national_id"];
   if (lib.isNIdValid(father_nid) === false) {
     response.json({ code: 3012, message: "father national id is invalid" });
   } else {
@@ -183,7 +193,10 @@ const validateMotherNID = (request, response, next) => {
 const validateFatherBirthID = (request, response, next) => {
   let father_birth_id = request.body["father_birth_reg_id"];
   if (lib.isBRIdValid(father_birth_id) === false) {
-    response.json({ code: 3014, message: "father birth registration id is invalid" });
+    response.json({
+      code: 3014,
+      message: "father birth registration id is invalid",
+    });
   } else {
     next();
   }
@@ -192,38 +205,39 @@ const validateFatherBirthID = (request, response, next) => {
 const validateMotherBirthID = (request, response, next) => {
   let mother_birth_id = request.body["mother_birth_reg_id"];
   if (lib.isBRIdValid(mother_birth_id) === false) {
-    response.json({ code: 3015, message: "mother birth registration id is invalid" });
+    response.json({
+      code: 3015,
+      message: "mother birth registration id is invalid",
+    });
   } else {
     next();
   }
 };
 
-const validateVaccinIdExist=(request,response,next)=>{
-   let person_birth_vaccine_id = request.body["person_birth_vaccine_id"];
-   db.isVaccineIdExist(person_birth_vaccine_id,(status)=>{
-     if (status === false) {
-       next();
-     } else if (status === true) {
-       response.json({ code: 3020, message: "vaccine id is already exist" });
-     } else if (status === "error") {
-       response.json({
-         code: "3004",
-         message: "some errors has been occured",
-       });
-     }
-   })
-}
-
-const validateBirthRegIdExist = (request, response, next) => {
-  let person_birth_reg_id = request.body["person_birth_reg_id"];
-  db.isBirthRegIdExist(person_birth_reg_id, (status) => {
-    if (status === true) {
-      next();
-    } else if (status === false) {
-      response.json({ code: 3022, message: "person birth registration id is not found" });
+const validateVaccinIdExist = (request, response, next) => {
+  let person_birth_vaccine_id;
+  let method = request.method;
+  if (method === "GET" || method === "DELETE") {
+    person_birth_vaccine_id = request.params["person_birth_vaccine_id"];
+  } else {
+    person_birth_vaccine_id = request.body["person_birth_vaccine_id"];
+  }
+  db.isVaccineIdExist(person_birth_vaccine_id, (status) => {
+    if (status === false) {
+      if (method === "GET" || method === "DELETE") {
+        response.json({ code: 3023, message: "vaccine id is not found" });
+      } else {
+        next();
+      }
+    } else if (status === true) {
+      if (method === "GET" || method === "DELETE") {
+        next();
+      } else {
+        response.json({ code: 3020, message: "vaccine id is already exist" });
+      }
     } else if (status === "error") {
       response.json({
-        code: "3004",
+        code: 3004,
         message: "some errors has been occured",
       });
     }
@@ -231,9 +245,7 @@ const validateBirthRegIdExist = (request, response, next) => {
 };
 
 const personUpdateRequiredField = (request, response, next) => {
-  let fieldList = [
-    "person_birth_reg_id",
-  ];
+  let fieldList = ["person_birth_reg_id"];
   if (lib.fieldFind(fieldList, request.body) === false) {
     response.json({ code: 3000, message: "required field is not found" });
   } else {
@@ -241,9 +253,40 @@ const personUpdateRequiredField = (request, response, next) => {
   }
 };
 
+const validateBirthRegIdExist = (request, response, next) => {
+  let method = request.method;
+  let person_birth_reg_id;
+  if (method === "GET" || method === "DELETE") {
+    person_birth_reg_id = request.params["person_birth_reg_id"];
+  } else {
+    person_birth_reg_id = request.body["person_birth_reg_id"];
+  }
+  db.isBirthRegIdExist(person_birth_reg_id, (status) => {
+    if (status === true) {
+      next();
+    } else if (status === false) {
+      response.json({
+        code: 3022,
+        message: "person birth registration id is not found",
+      });
+    } else if (status === "error") {
+      response.json({
+        code: 3004,
+        message: "some errors has been occured",
+      });
+    }
+  });
+};
+
 const validatePersonBirthID = (request, response, next) => {
-  let person_birth_id = request.body["person_birth_reg_id"];
-  if (lib.isBRIdValid(person_birth_id) === false) {
+    let method = request.method;
+    let person_birth_reg_id;
+    if (method === "GET" || method === "DELETE") {
+      person_birth_reg_id = request.params["person_birth_reg_id"];
+    } else {
+      person_birth_reg_id = request.body["person_birth_reg_id"];
+    }
+  if (lib.isBRIdValid(person_birth_reg_id) === false) {
     response.json({
       code: 3021,
       message: "person birth registration id is invalid",
@@ -253,6 +296,14 @@ const validatePersonBirthID = (request, response, next) => {
   }
 };
 
+const vaccineIdRequiredField = (request, response, next) => {
+  let fieldList = ["vaccine_id"];
+  if (lib.fieldFind(fieldList, request.params) === false) {
+    response.json({ code: 3000, message: "required field is not found" });
+  } else {
+    next();
+  }
+};
 
 module.exports = {
   loginRequiredField,
@@ -277,4 +328,5 @@ module.exports = {
   personUpdateRequiredField,
   validatePersonBirthID,
   validateBirthRegIdExist,
+  vaccineIdRequiredField,
 };

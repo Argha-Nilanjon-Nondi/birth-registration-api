@@ -2,8 +2,8 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
-const middleware = require("../Middlewares/index");
-const db = require("../Db/index");
+const middleware = require("../../Middlewares/index");
+const db = require("../../Db/index");
 const process = dotenv.config({path:"./.env"});
 
 router.post(
