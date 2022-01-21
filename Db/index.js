@@ -188,33 +188,6 @@ const getPersonProfileByVaccID = (vaccine_id, callback) => {
   );
 };
 
-let a = rand_number();
-let data = {
-  person_name: "Person Name " + a,
-  person_birth_date: "2005-1-10",
-  person_birth_no: 2,
-  person_birth_place: "Jhenaidha , Khulna , Bangladesh ",
-  person_gender: "male",
-  person_birth_vaccine_id: "0123456789012",
-  father_name: "Father Name " + a,
-  mother_name: "Mother Name " + a,
-  father_birth_reg_id: "01234527890123452",
-  father_national_id: "0123456789",
-  mother_birth_reg_id: "01234527890123452",
-  mother_national_id: "0123452789",
-};
-// addPersonData(data, (data) => {
-//   console.log(data);
-// });
-
-// getUserProfile((birth_reg_id = "17848646035472649"), (data) => {
-//   console.log(data);
-// });
-
-// updatePersonData("17848646035472649",{person_name:"Argha nondi"}, (data) => {
-//   console.log(data);
-// });
-
 const userCollectionSchema = mongoose.Schema({
   userid: { type: String, unique: true },
   username: { type: String, unique: true },
@@ -280,18 +253,6 @@ const checkUserType = (userid, usertype, callback) => {
     }
   );
 };
-
-// checkPassword("argha_nilanjon_nondi","56665'';'[][]",(data)=>{
-//   console.log(data)
-// })
-
-// addUser({username:"argha_nilanjon",usertype:"admin",password:"avunix9143"},(data)=>{
-//   console.log(data)
-// })
-
-// isVaccineIdExist("01234567890120", (status) => {
-//   console.log(status);
-// });
 
 module.exports = {
   addUser,

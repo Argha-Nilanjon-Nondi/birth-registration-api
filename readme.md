@@ -3,7 +3,7 @@
 
 It is a Birth Registration REST API
 
-
+<br>
 
 ## Features
 - Login
@@ -15,6 +15,8 @@ It is a Birth Registration REST API
 - Multiple device Login
 - Proper validtion
 
+<br>
+<br>
 
 ## Built with
 - Nodejs
@@ -24,11 +26,16 @@ It is a Birth Registration REST API
 - Cors
 - Helmet
 - JWT
+
+<br>
+
 ## Mongodb setup
 Default mongo setting will work fine . No username and passsword are not defined yet .But no username and passsword is not encouraged in production .
 - Set the database name to "BirthDB" . 
 - Then add two collection named "users" and "peoplebirthinfos".
 - Upload the collection from this git repo .
+
+<br>
 
 ## User setup
 - Go to /Db/index.js .
@@ -48,6 +55,10 @@ password:"any_password"
 - these characters are not allowed of username (space,#, %, "^, *,$)
 - passsword can contain any thing expect space
 - password must be minimum 8 character long
+
+<br>
+<br>
+
 ## Deployment
 
 To strat the mongodb
