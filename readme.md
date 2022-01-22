@@ -82,7 +82,7 @@ To start the express server
 
 ## Codes
 | code  | description |
-| ------------- | -------------- |
+| - | -------------- |
 | 2000 | login is successsful |
 | 2001 | person data is added |
 | 2002 | person data is updated |
@@ -113,9 +113,253 @@ To start the express server
 | 3022 | person birth registration id is not found |
 | 3023 | vaccine id is not found |
 
+<br>
+<br>
+
+## API Reference
+
+### Public (any type of user can access it)
+
+<br>
+
+### Find person data by birth registration id
+  
+#### URL  
+```http
+GET http://localhost:8080/api/person/:person_birth_reg_id
+```
+
+#### Response
+```json
+{
+    "code": 2004,
+    "message": "person data is found for the birth registration id",
+    "data": {
+        "person_name": "ARGHA NILANJON NONDI",
+        "person_birth_reg_id": "63219414052386825",
+        "person_birth_vaccine_id": "0123456789019",
+        "person_birth_date": "2005-01-09T18:00:00.000Z",
+        "person_birth_no": 99,
+        "person_birth_place": "Jhenaidha , Khulna , Bangladesh ",
+        "reg_issue_no": 12,
+        "reg_issue_date": "2022-01-17T00:00:00.000Z",
+        "person_gender": "female",
+        "father_name": "FATHER NAME ",
+        "mother_name": "MOTHER NAME ",
+        "father_birth_reg_id": "01234527890123450",
+        "father_national_id": "0123456709",
+        "mother_birth_reg_id": "01234527890123452",
+        "mother_national_id": "0123452789"
+    }
+}
+```
+#### Error codes
+| code  |
+| - |  
+| 3000 |
+| 3004 |
+| 3021 |
+| 3022 |
+
+<br />
+
+### Login user
+  
+#### URL  
+```http
+POST http://localhost:8080/api/login/
+```
+
+#### Request
+```json
+{
+ "username":"argha_nilanjon",
+ "password":"avunix9143"
+}
+```
+
+#### Response
+```json
+{
+    "code": "2000",
+    "message": "login is successsful",
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsI"
+    }
+}
+```
+#### Error codes
+| code  |
+| - |  
+| 3000 |
+| 3001 |
+| 3002 |
+| 3003 |
+| 3004 |
+
+<br />
+
+### Admin (only admins can access the routes)
+To use /api/admin/... route you have to set x-api-key:token in the headers.
+#### Error codes
+| code  |
+| - |  
+| 3005 |
+| 3006 |
+| 3007 |
+| 3008 |
 
 
+<br>
 
+### Add person data 
+  
+#### URL  
+```http
+POST http://localhost:8080/api/person/
+```
+
+#### Request
+```json
+{
+  "person_name": "Person Name ",
+  "person_birth_date": "2005-1-10",
+  "person_birth_no": "99",
+  "person_birth_place": "Jhenaidha , Khulna , Bangladesh ",
+  "person_gender": "female",
+  "person_birth_vaccine_id":"0123456789016",
+  "father_name": "Father Name ",
+  "mother_name": "Mother Name ",
+  "father_birth_reg_id": "01234527890123452",
+  "father_national_id": "0123456789",
+  "mother_birth_reg_id": "01234527890123452",
+  "mother_national_id": "0123452789"
+}
+```
+
+#### Response
+```json
+{
+    "code": 2001,
+    "message": "person data is added"
+}
+```
+#### Error codes
+| code  |
+| - |  
+| 3000 |
+| 3009 |
+| 3010 |
+| 3011 |
+| 3012 |
+| 3013 |
+| 3014 |
+| 3015 |
+| 3016 |
+| 3017 |
+| 3018 |
+| 3019 |
+| 3020 |
+| 3021 |
+
+<br />
+
+### Update person data 
+  
+#### URL  
+```http
+PUT http://localhost:8080/api/person/
+```
+
+#### Request
+```json
+{
+  "person_birth_reg_id":"80946395055722678",
+  "person_name": "Person Name ",
+  "person_birth_date": "2005-1-10",
+  "person_birth_no": "99",
+  "person_birth_place": "Jhenaidha , Khulna , Bangladesh ",
+  "person_gender": "female",
+  "person_birth_vaccine_id":"0123456789016",
+  "father_name": "Father Name ",
+  "mother_name": "Mother Name ",
+  "father_birth_reg_id": "01234527890123452",
+  "father_national_id": "0123456789",
+  "mother_birth_reg_id": "01234527890123452",
+  "mother_national_id": "0123452789"
+}
+```
+
+Remenber 
+- person_birth_reg_id is required field
+- other fields depend on what information admin want to update
+
+#### Response
+```json
+{
+    "code": 2001,
+    "message": "person data is added"
+}
+```
+#### Error codes
+| code  |
+| - |  
+| 3000 |
+| 3009 |
+| 3010 |
+| 3011 |
+| 3012 |
+| 3013 |
+| 3014 |
+| 3015 |
+| 3016 |
+| 3017 |
+| 3018 |
+| 3019 |
+| 3020 |
+| 3021 |
+
+<br />
+
+
+### Get a person data by vaccine id
+  
+#### URL  
+```http
+GET http://localhost:8080/api/person/:person_birth_vaccine_id
+```
+
+#### Response
+```json
+{
+    "code": 2003,
+    "message": "person data is found for the vaccine id",
+    "data": {
+        "person_name": "PERSON NAME ",
+        "person_birth_reg_id": "47680876021414496",
+        "person_birth_vaccine_id": "0123456789010",
+        "person_birth_date": "2005-01-09T18:00:00.000Z",
+        "person_birth_no": 99,
+        "person_birth_place": "Jhenaidha , Khulna , Bangladesh ",
+        "reg_issue_no": 13,
+        "reg_issue_date": "2022-01-20T00:00:00.000Z",
+        "person_gender": "female",
+        "father_name": "FATHER NAME ",
+        "mother_name": "MOTHER NAME ",
+        "father_birth_reg_id": "01234527890123452",
+        "father_national_id": "0123456789",
+        "mother_birth_reg_id": "01234527890123452",
+        "mother_national_id": "0123452789"
+    }
+}
+```
+#### Error codes
+| code  |
+| - |  
+| 3016 |
+| 3023 |
+
+<br />
 
 <br>
 <br>
