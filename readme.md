@@ -30,7 +30,8 @@ It is a Birth Registration REST API
 <br>
 
 ## Mongodb setup
-Default mongo setting will work fine . No username and passsword are not defined yet .But no username and passsword is not encouraged in production .
+- Add username and password in mongodb
+- Change the .env file as needed
 - Set the database name to "BirthDB" . 
 - Then add two collection named "users" and "peoplebirthinfos".
 - Upload the collection from this git repo .
@@ -41,7 +42,7 @@ Default mongo setting will work fine . No username and passsword are not defined
 - Go to /Db/index.js .
 - Open the index.js file .
 - To add user , run this code
-```nodejs
+```javascript
 addUser({username:"any_name",
 usertype:"admin",
 password:"any_password"
@@ -184,7 +185,7 @@ POST http://localhost:8080/api/login/
     "code": "2000",
     "message": "login is successsful",
     "data": {
-        "access_token": "eyJhbGciOiJIUzI1NiIsI"
+        "access_token": "eyJhbGciOiJIUzI1NiIsI...."
     }
 }
 ```
@@ -201,6 +202,13 @@ POST http://localhost:8080/api/login/
 
 ### Admin (only admins can access the routes)
 To use /api/admin/... route you have to set x-api-key:token in the headers.
+```
+ x-api-key:token
+
+```
+Remember
+- token can be found on /api/login route.
+
 #### Error codes
 | code  |
 | - |  
@@ -360,6 +368,28 @@ GET http://localhost:8080/api/person/:person_birth_vaccine_id
 | 3023 |
 
 <br />
+
+<br>
+<br>
+
+## Userful MongoDB commands
+### Add user
+```javascript
+db.createUser(
+  {
+    user: "admin",
+    pwd: "admin",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+```
+
+<br>
+
+### Authenticate a user and open mongo shell
+```bash
+mongosh --port portNo  --authenticationDatabase "userName" -u "passWord" -p
+```
 
 <br>
 <br>

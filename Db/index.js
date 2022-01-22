@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const dotenv = require("dotenv");
+
+const process = dotenv.config({path:"./.env"});
 
 function rand_number() {
   let min = 10000000;
@@ -7,9 +10,18 @@ function rand_number() {
   let rand = Math.floor(Math.random() * (max - min + 1)) + min;
   return rand.toString();
 }
+let mongo_username=process.parsed["MONGO_USERNAME"];
+let mongo_password=process.parsed["MONGO_PASSWORD"];
+let mongo_hostname=process.parsed["MONGO_HOSTNAME"];
+let mongo_port=process.parsed["MONGO_PORT"];
 
-uri = "mongodb://localhost:27017/birthDB";
+let uri;
+//uri = `mongodb://${mongo_username}:${mongo_password}@${mongo_hostname}:${mongo_port}/birthDB`;
+uri=`mongodb://${mongo_hostname}:${mongo_port}/birthDB`
+
 mongoose.connect(uri);
+
+const connection=mongoose.connection;
 
 let reg_id_length = 17;
 let nation_id_length = 10;
